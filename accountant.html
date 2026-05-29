@@ -10,11 +10,11 @@
 :root{--navy:#0d2248;--accent:#1d6ef5;--green:#0d9f6e;--red:#e03131;--amber:#e67700;--border:#e2e8f5;--muted:#64748b;--bg:#eef1f8;--white:#ffffff;--text:#0f172a;--alt:#f7f9ff;--shadow:0 1px 3px rgba(13,34,72,.08);--r:6px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Be Vietnam Pro','Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh;}
-.nav{background:var(--navy);display:flex;align-items:center;padding:0 18px;height:46px;gap:2px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(13,34,72,.3);}
+.nav{background:var(--navy);display:flex;align-items:center;padding:0 18px;height:46px;gap:2px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(13,34,72,.3);overflow-x:auto;flex-wrap:nowrap;}
 .nav a{color:rgba(255,255,255,.6);text-decoration:none;font-size:12.5px;font-weight:500;padding:5px 12px;border-radius:5px;transition:.15s;white-space:nowrap;}
 .nav a:hover{background:rgba(255,255,255,.1);color:#fff;}
 .nav a.active{background:rgba(29,110,245,.5);color:#fff;font-weight:600;}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0;white-space:nowrap;}
 .nav-user{color:rgba(255,255,255,.75);font-size:12px;font-weight:500;}
 .btn-logout{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 11px;font-size:12px;font-family:inherit;cursor:pointer;}
 .toolbar{background:var(--white);border-bottom:1px solid var(--border);padding:8px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
@@ -25,6 +25,7 @@ body{font-family:'Be Vietnam Pro','Segoe UI',Arial,sans-serif;background:var(--b
 .btn-excel{background:#f1f5f9;color:#475569;border:1px solid var(--border);}
 .btn-sm{padding:3px 9px;font-size:11.5px;}
 .btn-cost{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.btn-auto{background:#f0fdf4;color:#166534;border:1px solid #86efac;font-size:11px;padding:2px 8px;}
 /* FILTER BAR */
 .filter-wrap{background:var(--white);border-bottom:1px solid var(--border);padding:8px 18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .filter-wrap input[type="text"]{height:28px;font-size:12px;font-family:inherit;border:1px solid var(--border);border-radius:5px;padding:0 8px;width:220px;}
@@ -52,32 +53,58 @@ tr:last-child td{border-bottom:none;}
 tr:nth-child(even) td{background:var(--alt);}
 tr:nth-child(even) td.cost-cell{background:#f0f4ff;}
 tr:hover td{background:#e8eeff!important;}
-/* INLINE EDIT */
-.cost-input{height:24px;font-size:11.5px;font-family:inherit;border:1px solid #bfdbfe;border-radius:4px;padding:0 5px;background:#fff;color:var(--text);width:90px;text-align:right;}
-.cost-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(29,110,245,.1);}
 /* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
 .modal-bg.show{display:flex;}
-.modal{background:var(--white);padding:22px 24px;border-radius:10px;width:560px;max-width:95vw;box-shadow:0 8px 32px rgba(13,34,72,.2);max-height:90vh;overflow-y:auto;}
+.modal{background:var(--white);padding:22px 24px;border-radius:10px;width:600px;max-width:95vw;box-shadow:0 8px 32px rgba(13,34,72,.2);max-height:90vh;overflow-y:auto;}
 .modal h4{margin:0 0 14px;color:var(--navy);font-size:15px;font-weight:700;}
-.modal-info{background:var(--alt);border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:12px;line-height:1.7;}
+.modal-info{background:var(--alt);border-radius:6px;padding:10px 14px;margin-bottom:10px;font-size:12px;line-height:1.8;}
 .modal-info span{font-weight:600;color:var(--navy);}
+/* Fuel auto banner */
+.fuel-banner{background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:11.5px;color:#166534;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.fuel-banner strong{font-weight:700;}
+.fuel-banner .fuel-formula{color:#4b7c59;font-size:11px;}
+.m-section{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 6px;border-bottom:1px solid var(--border);padding-bottom:4px;}
 .m-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;}
 .m-field label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:2px;}
 .m-field input{height:28px;font-size:12px;font-family:inherit;border:1px solid var(--border);border-radius:5px;padding:0 7px;width:100%;}
 .m-field input:focus{outline:none;border-color:var(--accent);}
 .m-field input[readonly]{background:#f8fafc;color:var(--muted);}
+.m-field input.auto-filled{background:#f0fdf4;border-color:#86efac;color:#166534;}
 .m-total{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
 .m-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
 .btn-primary{background:var(--accent);color:#fff;padding:7px 18px;font-size:13px;}
 .btn-gray{background:#6b7280;color:#fff;padding:7px 14px;font-size:13px;}
+.btn-recalc{background:#f0fdf4;color:#166534;border:1px solid #86efac;padding:7px 14px;font-size:12px;}
 /* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:#22c55e;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;}
 .toast.show{opacity:1;}
 .toast.error{background:#ef4444;}
-.tag-done{background:#dcfce7;color:#166534;border-radius:20px;padding:1px 10px;font-size:10.5px;font-weight:600;}
-.tag-no{background:#fef3c7;color:#92400e;border-radius:20px;padding:1px 10px;font-size:10.5px;font-weight:600;}
 @media(max-width:768px){.m-grid{grid-template-columns:repeat(2,1fr);}}
+/* TABS */
+.tabs-wrap{background:var(--white);border-bottom:1px solid var(--border);padding:0 18px;display:flex;gap:2px;overflow-x:auto;}
+.tab-btn{padding:10px 16px;font-size:12.5px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.15s;white-space:nowrap;}
+.tab-btn:hover{color:var(--navy);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+/* PERF PANELS */
+.perf-wrap{padding:16px;}
+.perf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px;}
+.perf-kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;box-shadow:var(--shadow);}
+.perf-kpi .pk-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
+.perf-kpi .pk-val{font-size:20px;font-weight:700;margin-top:3px;}
+.card-section{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;}
+.card-head{padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--navy);}
+.bar-list{padding:10px 14px;display:flex;flex-direction:column;gap:8px;}
+.bar-item{display:flex;flex-direction:column;gap:3px;}
+.bar-row{display:flex;justify-content:space-between;font-size:11.5px;}
+.bar-row span:first-child{font-weight:600;max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bar-row span:last-child{color:var(--muted);font-size:11px;}
+.bar-track{height:7px;background:#e2e8f0;border-radius:10px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:10px;transition:width .5s;}
+.two-col-perf{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:860px){.two-col-perf{grid-template-columns:1fr;}}
+.perf-tbl-wrap{overflow-x:auto;max-height:360px;overflow-y:auto;}
+
 </style>
 </head>
 <body>
@@ -106,6 +133,16 @@ tr:hover td{background:#e8eeff!important;}
     <button class="btn btn-excel" onclick="exportExcel()">↓ Excel</button>
   </div>
 </div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <button class="tab-btn active" onclick="switchTab('main',this)">📒 Chi phí chuyến</button>
+  <button class="tab-btn" onclick="switchTab('veh',this)">🚛 Hiệu suất xe</button>
+  <button class="tab-btn" onclick="switchTab('cus',this)">👥 Hiệu suất khách hàng</button>
+</div>
+
+<!-- PANEL: Chi phí chuyến (gốc) -->
+<div id="panel-main">
 
 <!-- FILTER -->
 <div class="filter-wrap">
@@ -142,7 +179,7 @@ tr:hover td{background:#e8eeff!important;}
       <th class="cost-col">Tổng DT</th>
       <th class="cost-col">Cầu đường</th>
       <th class="cost-col">Nhiên liệu</th>
-      <th class="cost-col">Lương</th>
+      <th class="cost-col">Lương LX</th>
       <th class="cost-col">Sửa chữa</th>
       <th class="cost-col">Phí khác</th>
       <th class="cost-col">Tổng CP</th>
@@ -159,6 +196,18 @@ tr:hover td{background:#e8eeff!important;}
   <div class="modal">
     <h4>💰 Nhập chi phí chuyến</h4>
     <div class="modal-info" id="modalInfo"></div>
+
+    <!-- Banner tính NL tự động -->
+    <div class="fuel-banner" id="fuelBanner" style="display:none">
+      <div>
+        ⛽ <strong>Nhiên liệu tự động:</strong>
+        <span id="fuelBannerText"></span>
+      </div>
+      <button class="btn-auto" onclick="applyAutoFuel()">✅ Áp dụng</button>
+    </div>
+
+    <!-- DOANH THU -->
+    <div class="m-section">💵 Doanh thu</div>
     <div class="m-grid">
       <div class="m-field"><label>Loại DV</label><input id="mService" placeholder="Loại dịch vụ..."></div>
       <div class="m-field"><label>Đơn giá TK</label><input id="mTruckPrice" type="number" placeholder="0" oninput="calcModal()"></div>
@@ -167,27 +216,140 @@ tr:hover td{background:#e8eeff!important;}
       <div class="m-field"><label>Phí cược cont</label><input id="mDeposit" type="number" placeholder="0" oninput="calcModal()"></div>
       <div class="m-field"><label>Tổng doanh thu</label><input id="mRevenue" type="number" readonly></div>
     </div>
+
+    <!-- CHI PHÍ -->
+    <div class="m-section">💸 Chi phí</div>
     <div class="m-grid">
       <div class="m-field"><label>Cầu đường / Vé cổng</label><input id="mToll" type="number" placeholder="0" oninput="calcModal()"></div>
-      <div class="m-field"><label>Nhiên liệu</label><input id="mFuel" type="number" placeholder="0" oninput="calcModal()"></div>
-      <div class="m-field"><label>Lương chuyến</label><input id="mWage" type="number" placeholder="0" oninput="calcModal()"></div>
+      <div class="m-field">
+        <label>Nhiên liệu <span id="fuelAutoLabel" style="color:#16a34a;font-size:10px;font-weight:700;text-transform:none"></span></label>
+        <input id="mFuel" type="number" placeholder="0" oninput="calcModal()">
+      </div>
+      <div class="m-field">
+        <label>Lương chuyến <span id="wageAutoLabel" style="color:#16a34a;font-size:10px;font-weight:700;text-transform:none"></span></label>
+        <input id="mWage" type="number" placeholder="0" oninput="calcModal()">
+      </div>
       <div class="m-field"><label>Phí sửa chữa</label><input id="mRepair" type="number" placeholder="0" oninput="calcModal()"></div>
       <div class="m-field"><label>Phí khác</label><input id="mOther" type="number" placeholder="0" oninput="calcModal()"></div>
       <div class="m-field"><label>Tổng chi phí</label><input id="mCost" type="number" readonly></div>
     </div>
-    <div class="m-field" style="margin-bottom:0"><label>Diễn giải</label><input id="mNote" placeholder="Ghi chú..."></div>
+    <div class="m-field" style="margin-bottom:8px"><label>Diễn giải</label><input id="mNote" placeholder="Ghi chú..."></div>
+
     <div class="m-total">
       <span style="font-size:12px;font-weight:600;color:var(--muted)">Lợi nhuận</span>
       <span id="mProfit" style="font-size:18px;font-weight:700;color:var(--green)">0</span>
     </div>
     <div class="m-actions">
+      <button class="btn btn-recalc" onclick="recalcFuel()">⛽ Tính lại NL</button>
       <button class="btn btn-gray" onclick="closeModal()">Hủy</button>
       <button class="btn btn-primary" onclick="saveCost()">💾 Lưu chi phí</button>
     </div>
   </div>
 </div>
 
+</div><!-- /panel-main -->
+
 <div class="toast" id="toast"></div>
+
+<!-- PANEL: Hiệu suất xe -->
+<div id="panel-veh" style="display:none">
+  <div class="perf-wrap">
+    <div class="perf-grid" id="vehKpi">
+      <div class="perf-kpi"><div class="pk-label">Tổng xe hoạt động</div><div class="pk-val" id="vkTotalVeh" style="color:var(--accent)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">Tổng chuyến</div><div class="pk-val" id="vkTotalTrips" style="color:var(--navy)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">Tổng KM</div><div class="pk-val" id="vkTotalKm" style="color:var(--green)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">Tổng doanh thu</div><div class="pk-val" id="vkTotalRev" style="color:var(--accent)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">Tổng lợi nhuận</div><div class="pk-val" id="vkTotalProfit" style="color:var(--green)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">Tỷ lệ đã sắp xe</div><div class="pk-val" id="vkArrangedPct" style="color:var(--amber)">—</div></div>
+    </div>
+    <div class="two-col-perf">
+      <div>
+        <div class="card-section">
+          <div class="card-head">🏆 Top xe — số chuyến</div>
+          <div class="bar-list" id="vehBarTrips"></div>
+        </div>
+        <div class="card-section">
+          <div class="card-head">📏 Top xe — tổng KM</div>
+          <div class="bar-list" id="vehBarKm"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card-section">
+          <div class="card-head">💰 Top xe — doanh thu</div>
+          <div class="bar-list" id="vehBarRev"></div>
+        </div>
+        <div class="card-section">
+          <div class="card-head">📈 Top xe — lợi nhuận</div>
+          <div class="bar-list" id="vehBarProfit"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Bảng chi tiết xe -->
+    <div class="card-section">
+      <div class="card-head">📋 Chi tiết hiệu suất từng xe</div>
+      <div class="perf-tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>Số xe</th><th>Lái xe</th><th>Số chuyến</th>
+            <th>Đã sắp</th><th>Chưa sắp</th><th>Tổng KM</th>
+            <th>Doanh thu</th><th>Chi phí</th><th>Lợi nhuận</th><th>Tỷ suất</th>
+          </tr></thead>
+          <tbody id="vehTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL: Hiệu suất khách hàng -->
+<div id="panel-cus" style="display:none">
+  <div class="perf-wrap">
+    <div class="perf-grid">
+      <div class="perf-kpi"><div class="pk-label">Tổng khách hàng</div><div class="pk-val" id="ckTotalCus" style="color:var(--accent)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">Tổng chuyến</div><div class="pk-val" id="ckTotalTrips" style="color:var(--navy)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">Tổng doanh thu</div><div class="pk-val" id="ckTotalRev" style="color:var(--accent)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">Tổng lợi nhuận</div><div class="pk-val" id="ckTotalProfit" style="color:var(--green)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">DT bình quân/chuyến</div><div class="pk-val" id="ckAvgRev" style="color:var(--amber)">—</div></div>
+      <div class="perf-kpi"><div class="pk-label">LN bình quân/chuyến</div><div class="pk-val" id="ckAvgProfit" style="color:var(--green)">—</div></div>
+    </div>
+    <div class="two-col-perf">
+      <div>
+        <div class="card-section">
+          <div class="card-head">🏆 Top khách hàng — số chuyến</div>
+          <div class="bar-list" id="cusBarTrips"></div>
+        </div>
+        <div class="card-section">
+          <div class="card-head">💰 Top khách hàng — doanh thu</div>
+          <div class="bar-list" id="cusBarRev"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card-section">
+          <div class="card-head">📈 Top khách hàng — lợi nhuận</div>
+          <div class="bar-list" id="cusBarProfit"></div>
+        </div>
+        <div class="card-section">
+          <div class="card-head">📦 Top khách hàng — KH thường xuyên nhất</div>
+          <div class="bar-list" id="cusBarFreq"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Bảng chi tiết khách hàng -->
+    <div class="card-section">
+      <div class="card-head">📋 Chi tiết hiệu suất từng khách hàng</div>
+      <div class="perf-tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>Khách hàng</th><th>Mã KH</th><th>Số chuyến</th>
+            <th>Doanh thu</th><th>VAT 10%</th><th>Sau thuế</th>
+            <th>Chi phí</th><th>Lợi nhuận</th><th>Tỷ suất</th><th>DT/chuyến</th>
+          </tr></thead>
+          <tbody id="cusTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 const CURRENT_KEY="LOGIN_USER";
@@ -196,8 +358,6 @@ const ALL_NAV=[
   {page:"accountant.html",label:"📒 Accountant"},
   {page:"performance.html",label:"📈 Performance"},
   {page:"overview.html",label:"📊 Overview"},
-  {page:"master.html",label:"📂 Master",adminOnly:true},
-  {page:"maintenance.html",label:"🔧 Bảo dưỡng",adminOnly:true},
   {page:"users.html",label:"👑 Users",adminOnly:true},
 ];
 (function(){
@@ -220,6 +380,84 @@ function showToast(msg,err=false){
   clearTimeout(t._t);t._t=setTimeout(()=>{t.className="toast";},2500);
 }
 
+/* ============================================================
+   MASTER DATA — đọc từ localStorage (master.html sync về đây)
+   ============================================================ */
+const LOCAL_KEY = "MASTER_ALL_V4";
+
+function getMaster() {
+  try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "{}"); }
+  catch(e) { return {}; }
+}
+
+/* Lấy định mức NL (lít/100km) của xe theo biển số */
+function getTruckFuelRate(vehicleNo) {
+  const master = getMaster();
+  const trucks = master.trucks || [];
+  const trk = trucks.find(t => (t.truck||"").trim() === (vehicleNo||"").trim());
+  return trk ? parseFloat(trk.fuel || 0) : 0;
+}
+
+/* Lấy giá dầu áp dụng tại ngày planDate
+   — tìm mức giá có date <= planDate, mới nhất
+   — nếu không có thì lấy mức giá đầu tiên (mới nhất tuyệt đối) */
+function getFuelPrice(planDate) {
+  const master = getMaster();
+  const fuels  = (master.fuels || []).slice(); // đã sort desc by date trong master
+  if (!fuels.length) return 0;
+  if (!planDate) return parseFloat(fuels[0].price || 0);
+
+  // Tìm giá dầu gần nhất có date <= planDate
+  const applicable = fuels.filter(f => f.date <= planDate);
+  if (applicable.length) return parseFloat(applicable[0].price || 0); // fuels sort desc → [0] là mới nhất
+  // Nếu planDate trước tất cả → lấy giá cũ nhất
+  return parseFloat(fuels[fuels.length - 1].price || 0);
+}
+
+/* Lấy lương chuyến từ master theo khách hàng + kho
+   Tra qua customers[], khớp name + factory/factory2/3/4 → lấy wage tương ứng */
+function getWageFromMaster(customerName, factoryName) {
+  const master    = getMaster();
+  const customers = master.customers || [];
+  const cusName   = (customerName || "").trim();
+  const facName   = (factoryName  || "").trim();
+  if (!cusName || !facName) return 0;
+
+  const khoKeys = [
+    { factory: "factory",  wage: "wage"  },
+    { factory: "factory2", wage: "wage2" },
+    { factory: "factory3", wage: "wage3" },
+    { factory: "factory4", wage: "wage4" },
+  ];
+
+  for (const c of customers) {
+    if ((c.name || "").trim() !== cusName) continue;
+    for (const k of khoKeys) {
+      if ((c[k.factory] || "").trim() === facName) {
+        return parseFloat(c[k.wage] || 0);
+      }
+    }
+  }
+  return 0;
+}
+
+/* Tính phí nhiên liệu cho 1 chuyến
+   Công thức: km × định_mức (lít/100km) / 100 × giá_dầu (đ/lít)
+   Trả về { cost, liters, rate, pricePerLiter, hasData } */
+function calcAutoFuelCost(vehicleNo, km, planDate) {
+  const fuelRate     = getTruckFuelRate(vehicleNo);  // lít/100km
+  const pricePerLiter = getFuelPrice(planDate);       // đ/lít
+  const kmNum        = parseFloat(km || 0);
+
+  if (!fuelRate || !pricePerLiter || !kmNum) {
+    return { cost: 0, liters: 0, rate: fuelRate, pricePerLiter, hasData: false };
+  }
+
+  const liters = kmNum * fuelRate / 100;
+  const cost   = Math.round(liters * pricePerLiter);
+  return { cost, liters: +liters.toFixed(1), rate: fuelRate, pricePerLiter, hasData: true };
+}
+
 /* FIREBASE */
 firebase.initializeApp({
   apiKey:"AIzaSyAPmHlNgx-w5KfK4LF490pvdYA_mGgcX_k",
@@ -231,9 +469,10 @@ firebase.initializeApp({
 });
 const db=firebase.firestore();
 const COL_TRK="trucking_plan";
-const COL_COST="acc_costs"; // lưu chi phí riêng, key = truckingId
+const COL_COST="acc_costs";
 
 let trkStore=[], costStore={}, currentTrkId=null;
+let _autoFuelCost = 0; // giá trị NL tự tính, để applyAutoFuel dùng
 
 /* Load trucking real-time */
 db.collection(COL_TRK).orderBy("planDate","desc").onSnapshot(snap=>{
@@ -258,8 +497,6 @@ function render(data){
   const to=document.getElementById("toDate").value;
 
   let rows=data||[...trkStore];
-
-  // filter
   if(kw) rows=rows.filter(r=>
     (r.customer||"").toLowerCase().includes(kw)||
     (r.containerNo||"").toLowerCase().includes(kw)||
@@ -287,6 +524,12 @@ function render(data){
     sumRev+=rev; sumCost+=cost;
     if(hasCostData) doneCnt++;
 
+    // Tính NL tự động để hiển thị gợi ý trong bảng
+    const autoNL = calcAutoFuelCost(r.vehicleNo, r.km, r.planDate);
+    const fuelDisplay = hasCostData
+      ? fmt(c.fuel)
+      : (autoNL.hasData ? `<span style="color:#16a34a;font-size:10.5px">~${fmt(autoNL.cost)}</span>` : "");
+
     const tr=document.createElement("tr");
     tr.innerHTML=`
       <td>${i+1}</td>
@@ -307,7 +550,7 @@ function render(data){
       <td class="num cost-cell">${hasCostData?fmt(c.deposit):""}</td>
       <td class="num cost-cell" style="color:var(--accent)">${hasCostData?fmt(rev):""}</td>
       <td class="num cost-cell">${hasCostData?fmt(c.toll):""}</td>
-      <td class="num cost-cell">${hasCostData?fmt(c.fuel):""}</td>
+      <td class="num cost-cell">${fuelDisplay}</td>
       <td class="num cost-cell">${hasCostData?fmt(c.wage):""}</td>
       <td class="num cost-cell">${hasCostData?fmt(c.repair):""}</td>
       <td class="num cost-cell">${hasCostData?fmt(c.other):""}</td>
@@ -334,7 +577,9 @@ function render(data){
 document.getElementById("filterHasCost").onchange=render;
 document.getElementById("filterNoCost").onchange=render;
 
-/* MODAL */
+/* ============================================================
+   MODAL
+   ============================================================ */
 function openModal(trkId){
   currentTrkId=trkId;
   const r=trkStore.find(x=>x.id===trkId)||{};
@@ -343,27 +588,99 @@ function openModal(trkId){
   // Info banner
   document.getElementById("modalInfo").innerHTML=`
     <div><span>📅 Ngày:</span> ${r.planDate||""} &nbsp;|&nbsp; <span>👤 Khách:</span> ${r.customer||""} &nbsp;|&nbsp; <span>🔑 Mã KH:</span> ${r.cusCode||""}</div>
-    <div><span>🏭 Kho:</span> ${r.factory||""} &nbsp;|&nbsp; <span>🚛 Xe:</span> ${r.vehicleNo||""} &nbsp;|&nbsp; <span>👨‍✈️ Lái xe:</span> ${r.driver||""}</div>
+    <div><span>🏭 Kho:</span> ${r.factory||""} &nbsp;|&nbsp; <span>🚛 Xe:</span> ${r.vehicleNo||""} &nbsp;|&nbsp; <span>📏 KM:</span> ${r.km||"?"} km</div>
     <div><span>📦 Container:</span> ${r.containerNo||"(chưa có)"} &nbsp;|&nbsp; <span>📍 Tuyến:</span> ${r.depot||""} → ${r.port||""}</div>`;
 
-  mTruckPrice.value=c.truckPrice!==undefined?c.truckPrice:(r.price||0);
-  mService.value=c.service||"";
-  mLift.value=c.lift||0;
-  mDrop.value=c.dropFee||0;
-  mDeposit.value=c.deposit||0;
-  mToll.value=c.toll||0;
-  mFuel.value=c.fuel||0;
-  mWage.value=c.wage||0;
-  mRepair.value=c.repair||0;
-  mOther.value=c.other||0;
-  mNote.value=c.note||"";
+  // Điền form
+  mTruckPrice.value = c.truckPrice!==undefined ? c.truckPrice : (r.price||0);
+  mService.value    = c.service||"";
+  mLift.value       = c.lift||0;
+  mDrop.value       = c.dropFee||0;
+  mDeposit.value    = c.deposit||0;
+  mToll.value       = c.toll||0;
+  mRepair.value     = c.repair||0;
+  mOther.value      = c.other||0;
+  mNote.value       = c.note||"";
+
+  // ── Lương chuyến tự động từ master ──
+  const masterWage = getWageFromMaster(r.customer, r.factory);
+  const wageVal    = c.wage !== undefined ? c.wage   // đã lưu → giữ nguyên
+                   : r.wage               ? r.wage   // trucking có → dùng
+                   : masterWage;                     // tra master theo kho
+  mWage.value = wageVal || 0;
+  const wageAutoLbl = document.getElementById("wageAutoLabel");
+  if (!c.wage && masterWage) {
+    mWage.classList.add("auto-filled");
+    wageAutoLbl.textContent = `(master: ${fmt(masterWage)}đ)`;
+  } else {
+    mWage.classList.remove("auto-filled");
+    wageAutoLbl.textContent = masterWage ? `(master: ${fmt(masterWage)}đ)` : "";
+  }
+
+  // ── Tính NL tự động ──
+  const auto = calcAutoFuelCost(r.vehicleNo, r.km, r.planDate);
+  _autoFuelCost = auto.cost;
+
+  const fuelBanner  = document.getElementById("fuelBanner");
+  const fuelAutoLbl = document.getElementById("fuelAutoLabel");
+
+  if (auto.hasData) {
+    // Hiện banner
+    document.getElementById("fuelBannerText").innerHTML =
+      `<strong>${fmt(auto.cost)} đ</strong> &nbsp;
+       <span class="fuel-formula">(${auto.liters} lít × ${fmt(auto.pricePerLiter)} đ/lít &nbsp;|&nbsp; ĐM: ${auto.rate} lít/100km &nbsp;×&nbsp; ${r.km} km)</span>`;
+    fuelBanner.style.display = "flex";
+    fuelAutoLbl.textContent  = `(ĐM: ${auto.rate}L/100 × ${fmt(auto.pricePerLiter)}đ/L)`;
+
+    // Nếu chưa có data lưu → tự điền luôn
+    if (!c.fuel) {
+      mFuel.value = auto.cost;
+      mFuel.classList.add("auto-filled");
+    } else {
+      mFuel.value = c.fuel;
+      mFuel.classList.remove("auto-filled");
+    }
+  } else {
+    fuelBanner.style.display = "none";
+    fuelAutoLbl.textContent  = "";
+    mFuel.value = c.fuel||0;
+    mFuel.classList.remove("auto-filled");
+    // Thông báo thiếu data nếu cần
+    if (!c.fuel && r.km) {
+      const missing = [];
+      if (!getTruckFuelRate(r.vehicleNo)) missing.push("định mức xe");
+      if (!getFuelPrice(r.planDate))      missing.push("giá dầu");
+      if (missing.length) showToast(`⚠️ Thiếu ${missing.join(", ")} để tự tính NL`, true);
+    }
+  }
+
   calcModal();
   document.getElementById("modalBg").classList.add("show");
 }
 
+/* Nút "✅ Áp dụng" trên banner NL */
+window.applyAutoFuel = function() {
+  mFuel.value = _autoFuelCost;
+  mFuel.classList.add("auto-filled");
+  calcModal();
+  showToast("✅ Đã áp dụng nhiên liệu tự tính");
+};
+
+/* Nút "⛽ Tính lại NL" trong footer modal */
+window.recalcFuel = function() {
+  const r = trkStore.find(x=>x.id===currentTrkId)||{};
+  const auto = calcAutoFuelCost(r.vehicleNo, r.km, r.planDate);
+  if (!auto.hasData) { showToast("⚠️ Không đủ dữ liệu để tính NL (cần định mức xe + giá dầu)", true); return; }
+  _autoFuelCost = auto.cost;
+  mFuel.value = auto.cost;
+  mFuel.classList.add("auto-filled");
+  calcModal();
+  showToast(`⛽ Đã tính lại: ${auto.liters} lít × ${fmt(auto.pricePerLiter)} đ = ${fmt(auto.cost)} đ`);
+};
+
 function calcModal(){
-  const truck=+mTruckPrice.value||0,lift=+mLift.value||0,drop=+mDrop.value||0,dep=+mDeposit.value||0;
-  const toll=+mToll.value||0,fuel=+mFuel.value||0,wage=+mWage.value||0,repair=+mRepair.value||0,other=+mOther.value||0;
+  const truck=+mTruckPrice.value||0, lift=+mLift.value||0, drop=+mDrop.value||0, dep=+mDeposit.value||0;
+  const toll=+mToll.value||0, fuel=+mFuel.value||0, wage=+mWage.value||0, repair=+mRepair.value||0, other=+mOther.value||0;
   const rev=truck+lift+drop+dep, cost=toll+fuel+wage+repair+other, profit=rev-cost;
   mRevenue.value=rev; mCost.value=cost;
   const el=document.getElementById("mProfit");
@@ -411,14 +728,153 @@ window.clearSearch=function(){
   render();
 };
 
+/* TAB SWITCH */
+window.switchTab=function(id,el){
+  ["panel-main","panel-veh","panel-cus"].forEach(p=>{
+    const panel=document.getElementById(p);
+    if(panel) panel.style.display=p==="panel-"+id?"block":"none";
+  });
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  el.classList.add("active");
+  if(id==="veh")  renderVehPerf();
+  if(id==="cus")  renderCusPerf();
+};
+
+/* ── HELPERS ── */
+const fmtM=n=>{n=Number(n||0);if(n>=1e9)return(n/1e9).toFixed(1)+"B";if(n>=1e6)return(n/1e6).toFixed(1)+"M";return fmt(n);}
+
+function makeBars(containerId,items,color){
+  const el=document.getElementById(containerId);
+  if(!items.length){el.innerHTML='<div style="padding:12px;color:var(--muted);font-size:12px;text-align:center">Chưa có dữ liệu</div>';return;}
+  const max=Math.max(...items.map(x=>x.val),1);
+  el.innerHTML=items.slice(0,10).map(x=>`
+    <div class="bar-item">
+      <div class="bar-row"><span>${x.label}</span><span>${x.display||x.val}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(x.val/max*100)}%;background:${color}"></div></div>
+    </div>`).join("");
+}
+
+/* ── HIỆU SUẤT XE ── */
+function renderVehPerf(){
+  const map={};
+  trkStore.forEach(r=>{
+    const veh=r.vehicleNo||"(Chưa có xe)";
+    if(!map[veh]) map[veh]={veh,driver:r.driver||"",trips:0,arranged:0,km:0,rev:0,cost:0,profit:0};
+    map[veh].trips++;
+    if(r.vehicleNo&&r.containerNo) map[veh].arranged++;
+    map[veh].km+=+r.km||0;
+    const c=costStore[r.id]||{};
+    map[veh].rev+=+c.revenue||0;
+    map[veh].cost+=+c.cost||0;
+    map[veh].profit+=(+c.revenue||0)-(+c.cost||0);
+    if(r.driver) map[veh].driver=r.driver;
+  });
+
+  const rows=Object.values(map).filter(x=>x.veh!=="(Chưa có xe)").sort((a,b)=>b.trips-a.trips);
+  const totalVeh=rows.length;
+  const totalTrips=rows.reduce((s,x)=>s+x.trips,0);
+  const totalKm=rows.reduce((s,x)=>s+x.km,0);
+  const totalRev=rows.reduce((s,x)=>s+x.rev,0);
+  const totalProfit=rows.reduce((s,x)=>s+x.profit,0);
+  const totalArr=trkStore.filter(r=>r.vehicleNo&&r.containerNo).length;
+  const arrPct=totalTrips?Math.round(totalArr/totalTrips*100):0;
+
+  document.getElementById("vkTotalVeh").textContent=totalVeh;
+  document.getElementById("vkTotalTrips").textContent=totalTrips;
+  document.getElementById("vkTotalKm").textContent=fmt(totalKm)+" km";
+  document.getElementById("vkTotalRev").textContent=fmtM(totalRev)+" đ";
+  document.getElementById("vkTotalProfit").textContent=fmtM(totalProfit)+" đ";
+  document.getElementById("vkArrangedPct").textContent=arrPct+"%";
+
+  makeBars("vehBarTrips",rows.map(x=>({label:x.veh,val:x.trips})),"var(--accent)");
+  makeBars("vehBarKm",rows.slice().sort((a,b)=>b.km-a.km).map(x=>({label:x.veh,val:x.km,display:fmt(x.km)+" km"})),"var(--green)");
+  makeBars("vehBarRev",rows.slice().sort((a,b)=>b.rev-a.rev).map(x=>({label:x.veh,val:x.rev,display:fmtM(x.rev)+" đ"})),"var(--accent)");
+  makeBars("vehBarProfit",rows.slice().sort((a,b)=>b.profit-a.profit).map(x=>({label:x.veh,val:Math.max(x.profit,0),display:fmtM(x.profit)+" đ"})),"var(--green)");
+
+  document.getElementById("vehTableBody").innerHTML=rows.map((x,i)=>{
+    const margin=x.rev?Math.round(x.profit/x.rev*100):0;
+    const pending=x.trips-x.arranged;
+    return `<tr>
+      <td>${i+1}</td>
+      <td style="font-weight:700;font-family:monospace">${x.veh}</td>
+      <td class="tl">${x.driver}</td>
+      <td style="font-weight:700;color:var(--accent)">${x.trips}</td>
+      <td style="color:var(--green)">${x.arranged}</td>
+      <td style="color:${pending>0?"var(--amber)":"var(--muted)"}">${pending}</td>
+      <td class="num">${fmt(x.km)} km</td>
+      <td class="num" style="color:var(--accent)">${x.rev?fmtM(x.rev)+" đ":"—"}</td>
+      <td class="num" style="color:var(--red)">${x.cost?fmtM(x.cost)+" đ":"—"}</td>
+      <td class="num" style="color:${x.profit>=0?"var(--green)":"var(--red)"};font-weight:700">${x.rev?fmtM(x.profit)+" đ":"—"}</td>
+      <td style="font-weight:700;color:${margin>=20?"var(--green)":margin>=0?"var(--amber)":"var(--red)"}">${x.rev?margin+"%":"—"}</td>
+    </tr>`;
+  }).join("");
+}
+
+/* ── HIỆU SUẤT KHÁCH HÀNG ── */
+function renderCusPerf(){
+  const map={};
+  trkStore.forEach(r=>{
+    const cus=r.customer||"(Chưa có KH)";
+    if(!map[cus]) map[cus]={cus,code:r.cusCode||"",trips:0,rev:0,cost:0,profit:0};
+    map[cus].trips++;
+    const c=costStore[r.id]||{};
+    map[cus].rev+=+c.revenue||0;
+    map[cus].cost+=+c.cost||0;
+    map[cus].profit+=(+c.revenue||0)-(+c.cost||0);
+    if(r.cusCode) map[cus].code=r.cusCode;
+  });
+
+  const rows=Object.values(map).sort((a,b)=>b.trips-a.trips);
+  const totalCus=rows.length;
+  const totalTrips=rows.reduce((s,x)=>s+x.trips,0);
+  const totalRev=rows.reduce((s,x)=>s+x.rev,0);
+  const totalProfit=rows.reduce((s,x)=>s+x.profit,0);
+  const avgRev=totalTrips?Math.round(totalRev/totalTrips):0;
+  const avgProfit=totalTrips?Math.round(totalProfit/totalTrips):0;
+
+  document.getElementById("ckTotalCus").textContent=totalCus;
+  document.getElementById("ckTotalTrips").textContent=totalTrips;
+  document.getElementById("ckTotalRev").textContent=fmtM(totalRev)+" đ";
+  document.getElementById("ckTotalProfit").textContent=fmtM(totalProfit)+" đ";
+  document.getElementById("ckAvgRev").textContent=fmtM(avgRev)+" đ";
+  document.getElementById("ckAvgProfit").textContent=fmtM(avgProfit)+" đ";
+
+  makeBars("cusBarTrips",rows.map(x=>({label:x.cus,val:x.trips})),"var(--accent)");
+  makeBars("cusBarRev",rows.slice().sort((a,b)=>b.rev-a.rev).map(x=>({label:x.cus,val:x.rev,display:fmtM(x.rev)+" đ"})),"var(--green)");
+  makeBars("cusBarProfit",rows.slice().sort((a,b)=>b.profit-a.profit).map(x=>({label:x.cus,val:Math.max(x.profit,0),display:fmtM(x.profit)+" đ"})),"var(--amber)");
+  makeBars("cusBarFreq",rows.map(x=>({label:x.cus,val:x.trips,display:x.trips+" chuyến"})),"#8b5cf6");
+
+  document.getElementById("cusTableBody").innerHTML=rows.map((x,i)=>{
+    const vat=Math.round(x.rev*0.1);
+    const after=x.rev+vat;
+    const margin=x.rev?Math.round(x.profit/x.rev*100):0;
+    const avgR=x.trips?Math.round(x.rev/x.trips):0;
+    return `<tr>
+      <td>${i+1}</td>
+      <td class="tl" style="font-weight:700">${x.cus}</td>
+      <td>${x.code}</td>
+      <td style="font-weight:700;color:var(--accent)">${x.trips}</td>
+      <td class="num" style="color:var(--accent)">${x.rev?fmtM(x.rev)+" đ":"—"}</td>
+      <td class="num" style="color:var(--amber)">${x.rev?fmtM(vat)+" đ":"—"}</td>
+      <td class="num" style="color:var(--navy);font-weight:700">${x.rev?fmtM(after)+" đ":"—"}</td>
+      <td class="num" style="color:var(--red)">${x.cost?fmtM(x.cost)+" đ":"—"}</td>
+      <td class="num" style="color:${x.profit>=0?"var(--green)":"var(--red)"};font-weight:700">${x.rev?fmtM(x.profit)+" đ":"—"}</td>
+      <td style="font-weight:700;color:${margin>=20?"var(--green)":margin>=0?"var(--amber)":"var(--red)"}">${x.rev?margin+"%":"—"}</td>
+      <td class="num">${avgR?fmtM(avgR)+" đ":"—"}</td>
+    </tr>`;
+  }).join("");
+}
+
 /* EXPORT */
 window.exportExcel=function(){
   if(!trkStore.length){showToast("Không có dữ liệu",true);return;}
   const hdr=["Ngày","Khách","Mã KH","Kho/NM","KM","Xe","Lái xe","Container","Booking","Nơi lấy","Nơi hạ","Đơn giá TK","Loại DV","Phí nâng","Phí hạ","Cược cont","Tổng DT","Cầu đường","Nhiên liệu","Lương","Sửa chữa","Phí khác","Tổng CP","Lợi nhuận","Diễn giải"];
   const rows=trkStore.map(r=>{
     const c=costStore[r.id]||{};
-    const rev=+c.revenue||0,cost=+c.cost||0;
-    return [r.planDate,r.customer,r.cusCode,r.factory,r.km,r.vehicleNo,r.driver,r.containerNo,r.booking,r.depot,r.port,r.price,c.service||"",c.lift||"",c.dropFee||"",c.deposit||"",rev||"",c.toll||"",c.fuel||"",c.wage||"",c.repair||"",c.other||"",cost||"",rev-cost||"",c.note||""];
+    const rev=+c.revenue||0, cost=+c.cost||0;
+    // Nếu chưa nhập NL → dùng giá tự tính
+    const fuelVal = c.fuel || (calcAutoFuelCost(r.vehicleNo, r.km, r.planDate).cost) || "";
+    return [r.planDate,r.customer,r.cusCode,r.factory,r.km,r.vehicleNo,r.driver,r.containerNo,r.booking,r.depot,r.port,r.price,c.service||"",c.lift||"",c.dropFee||"",c.deposit||"",rev||"",c.toll||"",fuelVal,c.wage||"",c.repair||"",c.other||"",cost||"",rev-cost||"",c.note||""];
   });
   const csv=[hdr,...rows].map(r=>r.join(",")).join("\n");
   const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
