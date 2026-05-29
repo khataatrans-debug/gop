@@ -71,8 +71,8 @@ body{font-family:'Be Vietnam Pro','Segoe UI',Arial,sans-serif;background:var(--b
 /* Hàng 1: 3 ngày + khách hàng + nơi lấy + nơi hạ + mã KH — 7 cột đều */
 .row-r1{ grid-template-columns: repeat(7, 1fr); }
 
-/* Hàng 2: booking + carrier + kho + km + đơn giá — 5 cột đều */
-.row-r2{ grid-template-columns: repeat(5, 1fr); }
+/* Hàng 2: booking + carrier + kho + km + đơn giá + lương + NL — 7 cột đều */
+.row-r2{ grid-template-columns: repeat(7, 1fr); }
 
 /* Hàng 3: số xe + mooc + lái xe + số lượng + container — 5 cột đều */
 .row-r3{ grid-template-columns: repeat(5, 1fr); }
@@ -153,9 +153,8 @@ tr:hover td{background:#e8eeff!important;}
     { page: "accountant.html",  label: "📒 Accountant" },
     { page: "performance.html", label: "📈 Performance" },
     { page: "overview.html",    label: "📊 Overview" },
-    { page: "master.html",      label: "📂 Master",      adminOnly: true },
-    { page: "maintenance.html", label: "🔧 Bảo dưỡng",  adminOnly: true },
-    { page: "users.html",       label: "👑 Users",        adminOnly: true },
+    { page: "master.html",      label: "📂 Master",  adminOnly: true },
+    { page: "users.html",       label: "👑 Users",   adminOnly: true },
   ];
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -212,7 +211,8 @@ tr:hover td{background:#e8eeff!important;}
     <button class="btn btn-new"    onclick="newForm()">＋ Tạo mới</button>
     <button class="btn btn-cancel" onclick="cancelEdit()">✕ Hủy</button>
     <button class="btn btn-excel"  onclick="exportExcel()">↓ Excel</button>
-    
+    <button class="btn btn-master" onclick="document.getElementById('masterImport').click()">📥 Master</button>
+    <input type="file" id="masterImport" accept=".json" style="display:none" onchange="importMaster(this)">
   </div>
 </div>
 
@@ -232,7 +232,7 @@ tr:hover td{background:#e8eeff!important;}
       <div class="field"><span class="lbl">Mã KH</span>      <input id="cusCode" readonly></div>
     </div>
 
-    <!-- HÀNG 2: 5 cột đều -->
+    <!-- HÀNG 2: 7 cột đều -->
     <div class="sec"><span class="sec-label">🗺️ Tuyến đường</span><div class="sec-line"></div></div>
     <div class="row row-r2">
       <div class="field"><span class="lbl">Booking</span>      <input id="booking" placeholder="Số booking..."></div>
@@ -240,6 +240,8 @@ tr:hover td{background:#e8eeff!important;}
       <div class="field"><span class="lbl">Kho / Nhà máy</span><select id="factory"><option value="">-- Chọn kho --</option></select></div>
       <div class="field"><span class="lbl">KM</span>           <input id="km" readonly></div>
       <div class="field"><span class="lbl">Đơn giá (VNĐ)</span><input id="price" placeholder="0"></div>
+      <div class="field"><span class="lbl">Lương chuyến</span> <input id="wage" readonly></div>
+      <div class="field"><span class="lbl">NL ước tính (lít)</span><input id="fuelEst" readonly></div>
     </div>
 
     <!-- HÀNG 3: 5 cột đều -->
@@ -285,8 +287,8 @@ tr:hover td{background:#e8eeff!important;}
     <thead>
       <tr>
         <th>#</th><th>Ngày KH</th><th>Khách hàng</th><th>Mã KH</th>
-        <th>Kho / Nhà máy</th><th>Carrier</th><th>KM</th><th>Số xe</th>
-        <th>Lái xe</th><th>SL</th><th>Đơn giá</th><th>Container</th>
+        <th>Kho / Nhà máy</th><th>KM</th><th>Số xe</th><th>Mooc</th>
+        <th>Lái xe</th><th>SL</th><th>Đơn giá</th><th>Lương LX</th><th>NL (lít)</th><th>Container</th>
         <th>Trạng thái</th><th>Ghi chú</th><th>File</th><th>Sửa</th><th>Xóa</th>
       </tr>
     </thead>
@@ -308,6 +310,8 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
   const elDriver      = document.getElementById("driver");
   const elKm          = document.getElementById("km");
   const elPrice       = document.getElementById("price");
+  const elWage        = document.getElementById("wage");
+  const elFuelEst     = document.getElementById("fuelEst");
   const elCusCode     = document.getElementById("cusCode");
   const elQty         = document.getElementById("qty");
   const elContainerNo = document.getElementById("containerNo");
@@ -349,11 +353,28 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
 
   const nc = customers.map(c => ({
     ...c,
-    name:    (c.name    || "").trim(),
-    code:    (c.code    || "").trim(),
-    factory: (c.factory || "").trim(),
-    km:      (c.km      || "").trim(),
-    price:   (c.price   || "").trim(),
+    name:     (c.name     || "").trim(),
+    code:     (c.code     || "").trim(),
+    factory:  (c.factory  || "").trim(),
+    factory2: (c.factory2 || "").trim(),
+    factory3: (c.factory3 || "").trim(),
+    factory4: (c.factory4 || "").trim(),
+    km:       (c.km       || "").trim(),
+    km2:      (c.km2      || "").trim(),
+    km3:      (c.km3      || "").trim(),
+    km4:      (c.km4      || "").trim(),
+    price:    (c.price    || "").trim(),
+    price2:   (c.price2   || "").trim(),
+    price3:   (c.price3   || "").trim(),
+    price4:   (c.price4   || "").trim(),
+    wage:     (c.wage     || "").trim(),
+    wage2:    (c.wage2    || "").trim(),
+    wage3:    (c.wage3    || "").trim(),
+    wage4:    (c.wage4    || "").trim(),
+    fuel:     (c.fuel     || "").trim(),
+    fuel2:    (c.fuel2    || "").trim(),
+    fuel3:    (c.fuel3    || "").trim(),
+    fuel4:    (c.fuel4    || "").trim(),
   }));
 
   fillSelect(elCustomer,  [...new Set(nc.map(c => c.name))].filter(Boolean));
@@ -370,17 +391,34 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
   elCustomer.onchange = function () {
     elFactory.innerHTML = '<option value="">-- Chọn kho --</option>';
     elKm.value = ""; elPrice.value = ""; elCusCode.value = "";
+    elWage.value = ""; elFuelEst.value = "";
     const name = (this.value || "").trim();
     if (!name) return;
     const rows = nc.filter(c => c.name === name);
     if (!rows.length) return;
-    elCusCode.value = rows[0].code || "";
+    const r0 = rows[0];
+    elCusCode.value = r0.code || "";
+    // Thêm tất cả kho (kho1-4), gán đúng km/price/wage/fuel theo số thứ tự kho
+    const addedKhos = new Set();
+    const khoKeys = [
+      { factory:"factory",  km:"km",  price:"price",  wage:"wage",  fuel:"fuel"  },
+      { factory:"factory2", km:"km2", price:"price2", wage:"wage2", fuel:"fuel2" },
+      { factory:"factory3", km:"km3", price:"price3", wage:"wage3", fuel:"fuel3" },
+      { factory:"factory4", km:"km4", price:"price4", wage:"wage4", fuel:"fuel4" },
+    ];
     rows.forEach(c => {
-      if (!c.factory) return;
-      const o = document.createElement("option");
-      o.value = c.factory; o.textContent = c.factory;
-      o.dataset.km = c.km; o.dataset.price = c.price;
-      elFactory.appendChild(o);
+      khoKeys.forEach(keys => {
+        const kho = (c[keys.factory] || "").trim();
+        if (!kho || addedKhos.has(kho)) return;
+        addedKhos.add(kho);
+        const o = document.createElement("option");
+        o.value = kho; o.textContent = kho;
+        o.dataset.km    = c[keys.km]    || "";
+        o.dataset.price = c[keys.price] || "";
+        o.dataset.wage  = c[keys.wage]  || "";
+        o.dataset.fuel  = c[keys.fuel]  || "";
+        elFactory.appendChild(o);
+      });
     });
     if (elFactory.options.length === 2) {
       elFactory.selectedIndex = 1;
@@ -390,9 +428,14 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
 
   elFactory.onchange = function () {
     const o = this.selectedOptions[0];
-    if (!o || !o.dataset.km) { elKm.value = ""; elPrice.value = ""; return; }
+    if (!o || !o.dataset.km) {
+      elKm.value = ""; elPrice.value = ""; elWage.value = ""; elFuelEst.value = ""; return;
+    }
     elKm.value    = o.dataset.km;
-    elPrice.value = o.dataset.price;
+    elPrice.value = o.dataset.price || "";
+    elWage.value  = o.dataset.wage  || "";
+    // Tính nhiên liệu ước tính = km × định mức xe / 100
+    calcFuel();
   };
 
   elVehicleNo.onchange = function () {
@@ -400,10 +443,31 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
     elDriver.value = "";
     const list = trucks.filter(x => (x.truck||"").trim() === this.value);
     if (!list.length) return;
-    elDriver.value = list[0].driver || "";
-    const moocs = [...new Set(list.flatMap(t => t.mooc ? t.mooc.split(",").map(m => m.trim()) : []))];
+    const trk = list[0];
+    elDriver.value = trk.driver || "";
+    // Lưu định mức NL xe vào dataset để calcFuel dùng
+    elVehicleNo.dataset.fuel = trk.fuel || "";
+    // Lấy mooc1-4
+    const moocFields = ["mooc","mooc2","mooc3","mooc4"];
+    const moocs = [...new Set(
+      list.flatMap(t => moocFields.map(k => (t[k]||"").trim()).filter(Boolean))
+    )];
     moocs.forEach(m => elMooc.insertAdjacentHTML("beforeend", `<option>${m}</option>`));
+    // Tính lại nhiên liệu khi đổi xe
+    calcFuel();
   };
+
+  // ── TÍNH NHIÊN LIỆU ƯỚC TÍNH ──
+  // Công thức: NL = km × (định mức xe lít/100km) / 100
+  function calcFuel() {
+    const km       = parseFloat(elKm.value)              || 0;
+    const fuelRate = parseFloat(elVehicleNo.dataset.fuel) || 0;
+    if (km > 0 && fuelRate > 0) {
+      elFuelEst.value = (km * fuelRate / 100).toFixed(1) + " lít";
+    } else {
+      elFuelEst.value = "";
+    }
+  }
 
   /* ===== FIREBASE FIRESTORE ===== */
   const { initializeApp } = window.__fbApp;
@@ -458,9 +522,10 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
           planDate:elPlanDate.value, cutoff:elCutoff.value, returnDate:elReturnDate.value,
           customer:(elCustomer.value||"").trim(), cusCode:elCusCode.value,
           depot:elDepot.value, port:elPort.value,
-          booking:elBooking.value,carrier:document.getElementById("carrier").value, factory:elFactory.value, km:elKm.value,
+          booking:elBooking.value, factory:elFactory.value, km:elKm.value,
           vehicleNo:elVehicleNo.value, mooc:elMooc.value, driver:elDriver.value,
-          price:elPrice.value, containerNo:elContainerNo.value, note:elNote.value,
+          price:elPrice.value, wage:elWage.value, fuelEst:elFuelEst.value,
+          containerNo:elContainerNo.value, note:elNote.value,
           attachName: attachName || existing.attachName || "",
           attachData: attachData || existing.attachData || ""
         };
@@ -472,9 +537,10 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
             planDate:elPlanDate.value, cutoff:elCutoff.value, returnDate:elReturnDate.value,
             customer:(elCustomer.value||"").trim(), cusCode:elCusCode.value,
             depot:elDepot.value, port:elPort.value,
-            booking:elBooking.value,carrier:document.getElementById("carrier").value, factory:elFactory.value, km:elKm.value,
+            booking:elBooking.value, factory:elFactory.value, km:elKm.value,
             vehicleNo:elVehicleNo.value, mooc:elMooc.value, driver:elDriver.value,
-            price:elPrice.value, containerNo:elContainerNo.value, note:elNote.value,
+            price:elPrice.value, wage:elWage.value, fuelEst:elFuelEst.value,
+            containerNo:elContainerNo.value, note:elNote.value,
             attachName, attachData
           };
           await saveDoc(rec);
@@ -500,7 +566,6 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
     elBooking.value    = r.booking    || "";
     elDepot.value      = r.depot      || "";
     elPort.value       = r.port       || "";
-    document.getElementById("carrier").value = r.carrier || "";
     elCustomer.value   = (r.customer  || "").trim();
     elCustomer.dispatchEvent(new Event("change"));
     setTimeout(() => {
@@ -513,8 +578,16 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
     }, 0);
     elCusCode.value   = r.cusCode   || "";
     elVehicleNo.value = r.vehicleNo || "";
+    elVehicleNo.dataset.fuel = "";
+    // Tìm lại định mức NL xe để calcFuel hoạt động đúng
+    const trk = trucks.find(x => (x.truck||"").trim() === r.vehicleNo);
+    if (trk) elVehicleNo.dataset.fuel = trk.fuel || "";
     elVehicleNo.dispatchEvent(new Event("change"));
-    setTimeout(() => { elMooc.value = r.mooc || ""; elDriver.value = r.driver || ""; }, 0);
+    setTimeout(() => {
+      elMooc.value = r.mooc || ""; elDriver.value = r.driver || "";
+      elWage.value    = r.wage    || "";
+      elFuelEst.value = r.fuelEst || "";
+    }, 0);
     elContainerNo.value = r.containerNo || "";
     elNote.value        = r.note        || "";
     elQty.value = 1;
@@ -550,12 +623,13 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
 
   window.exportExcel = function () {
     if (!store.length) { alert("Không có dữ liệu để xuất"); return; }
-    const hdr = ["Ngày","Khách","Mã KH","Nơi lấy","Nơi hạ","Carrier","Kho","KM","Xe","Mooc","Tài xế","Giá","Container","Ghi chú"];
+    const hdr = ["Ngày","Khách","Mã KH","Nơi lấy","Nơi hạ","Kho","KM","Xe","Mooc","Tài xế","Giá","Lương LX","NL (lít)","Container","Ghi chú"];
     const rows = store.map(r => [
       r.planDate||"", r.customer||"", r.cusCode||"",
-      r.depot||"", r.port||"", r.carrier||"", r.factory||"",
+      r.depot||"", r.port||"", r.factory||"",
       r.km||"", r.vehicleNo||"", r.mooc||"", r.driver||"",
-      r.price||"", r.containerNo||"", (r.note||"").replace(/,/g," ")
+      r.price||"", r.wage||"", r.fuelEst||"",
+      r.containerNo||"", (r.note||"").replace(/,/g," ")
     ]);
     const csv = [hdr,...rows].map(r=>r.join(",")).join("\n");
     const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
@@ -567,7 +641,25 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
   };
 
   /* ===== IMPORT MASTER ===== */
-  
+  window.importMaster = function (input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const imp = JSON.parse(e.target.result);
+        const missing = ["customers","trucks","locations","carriers"].filter(k => !Array.isArray(imp[k]));
+        if (missing.length) { alert("File không hợp lệ! Thiếu: " + missing.join(", ")); return; }
+        if (!confirm(`Nhập Master Data:\n• ${imp.customers.length} khách hàng\n• ${imp.trucks.length} xe\n• ${imp.carriers.length} hãng tàu\n\nGhi đè data hiện tại?`)) return;
+        localStorage.setItem(MASTER_KEY, JSON.stringify(imp));
+        alert("✅ Nhập xong! Trang sẽ tải lại.");
+        location.reload();
+      } catch(err) { alert("Lỗi đọc file: " + err.message); }
+      input.value = "";
+    };
+    reader.readAsText(file);
+  };
+
   /* ===== RENDER ===== */
   function render(override) {
     tbody.innerHTML = "";
@@ -586,13 +678,14 @@ await new Promise(r=>document.readyState==="loading"?document.addEventListener("
         <td class="tl">${r.customer||""}</td>
         <td>${r.cusCode||""}</td>
         <td class="tl" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.factory||""}">${r.factory||""}</td>
-        <td>${r.carrier||""}</td>
         <td>${r.km||""}</td>
         <td>${r.vehicleNo||""}</td>
         <td>${r.mooc||""}</td>
         <td class="tl">${r.driver||""}</td>
         <td>1</td>
         <td style="font-weight:600">${Number(r.price||0).toLocaleString("vi-VN")}</td>
+        <td style="color:#0d9f6e;font-weight:600">${Number(r.wage||0).toLocaleString("vi-VN")}</td>
+        <td style="color:#1d6ef5">${r.fuelEst||""}</td>
         <td style="font-family:monospace">${r.containerNo||""}</td>
         <td>${ok?'<span class="tag-ok">✔ Đã sắp</span>':'<span class="tag-pending">⏳ Chờ sắp</span>'}</td>
         <td class="tl">${r.note||""}</td>
