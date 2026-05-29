@@ -25,6 +25,7 @@ body{font-family:'Be Vietnam Pro','Segoe UI',Arial,sans-serif;background:var(--b
 .btn-excel{background:#f1f5f9;color:#475569;border:1px solid var(--border);}
 .btn-sm{padding:3px 9px;font-size:11.5px;}
 .btn-cost{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.btn-auto{background:#f0fdf4;color:#166534;border:1px solid #86efac;font-size:11px;padding:2px 8px;}
 /* FILTER BAR */
 .filter-wrap{background:var(--white);border-bottom:1px solid var(--border);padding:8px 18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .filter-wrap input[type="text"]{height:28px;font-size:12px;font-family:inherit;border:1px solid var(--border);border-radius:5px;padding:0 8px;width:220px;}
@@ -52,31 +53,33 @@ tr:last-child td{border-bottom:none;}
 tr:nth-child(even) td{background:var(--alt);}
 tr:nth-child(even) td.cost-cell{background:#f0f4ff;}
 tr:hover td{background:#e8eeff!important;}
-/* INLINE EDIT */
-.cost-input{height:24px;font-size:11.5px;font-family:inherit;border:1px solid #bfdbfe;border-radius:4px;padding:0 5px;background:#fff;color:var(--text);width:90px;text-align:right;}
-.cost-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(29,110,245,.1);}
 /* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
 .modal-bg.show{display:flex;}
-.modal{background:var(--white);padding:22px 24px;border-radius:10px;width:560px;max-width:95vw;box-shadow:0 8px 32px rgba(13,34,72,.2);max-height:90vh;overflow-y:auto;}
+.modal{background:var(--white);padding:22px 24px;border-radius:10px;width:600px;max-width:95vw;box-shadow:0 8px 32px rgba(13,34,72,.2);max-height:90vh;overflow-y:auto;}
 .modal h4{margin:0 0 14px;color:var(--navy);font-size:15px;font-weight:700;}
-.modal-info{background:var(--alt);border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:12px;line-height:1.7;}
+.modal-info{background:var(--alt);border-radius:6px;padding:10px 14px;margin-bottom:10px;font-size:12px;line-height:1.8;}
 .modal-info span{font-weight:600;color:var(--navy);}
+/* Fuel auto banner */
+.fuel-banner{background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:11.5px;color:#166534;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.fuel-banner strong{font-weight:700;}
+.fuel-banner .fuel-formula{color:#4b7c59;font-size:11px;}
+.m-section{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 6px;border-bottom:1px solid var(--border);padding-bottom:4px;}
 .m-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;}
 .m-field label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:2px;}
 .m-field input{height:28px;font-size:12px;font-family:inherit;border:1px solid var(--border);border-radius:5px;padding:0 7px;width:100%;}
 .m-field input:focus{outline:none;border-color:var(--accent);}
 .m-field input[readonly]{background:#f8fafc;color:var(--muted);}
+.m-field input.auto-filled{background:#f0fdf4;border-color:#86efac;color:#166534;}
 .m-total{background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
 .m-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
 .btn-primary{background:var(--accent);color:#fff;padding:7px 18px;font-size:13px;}
 .btn-gray{background:#6b7280;color:#fff;padding:7px 14px;font-size:13px;}
+.btn-recalc{background:#f0fdf4;color:#166534;border:1px solid #86efac;padding:7px 14px;font-size:12px;}
 /* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:#22c55e;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;}
 .toast.show{opacity:1;}
 .toast.error{background:#ef4444;}
-.tag-done{background:#dcfce7;color:#166534;border-radius:20px;padding:1px 10px;font-size:10.5px;font-weight:600;}
-.tag-no{background:#fef3c7;color:#92400e;border-radius:20px;padding:1px 10px;font-size:10.5px;font-weight:600;}
 @media(max-width:768px){.m-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
@@ -92,7 +95,6 @@ tr:hover td{background:#e8eeff!important;}
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <nav class="nav" id="mainNav">
   <div class="nav-right">
@@ -133,9 +135,7 @@ tr:hover td{background:#e8eeff!important;}
 <div class="tbl-wrap">
   <table>
     <thead><tr>
-      <th>#</th>
-      <th class="cost-col" style="position:sticky;left:0;z-index:6">Chi phí</th>
-      <th>Ngày KH</th><th>Khách hàng</th><th>Mã KH</th>
+      <th>#</th><th>Ngày KH</th><th>Khách hàng</th><th>Mã KH</th>
       <th>Kho / Nhà máy</th><th>KM</th><th>Số xe</th><th>Lái xe</th>
       <th>Container</th><th>Booking</th><th>Nơi lấy</th><th>Nơi hạ</th>
       <th>Đơn giá TK</th>
@@ -145,12 +145,13 @@ tr:hover td{background:#e8eeff!important;}
       <th class="cost-col">Tổng DT</th>
       <th class="cost-col">Cầu đường</th>
       <th class="cost-col">Nhiên liệu</th>
-      <th class="cost-col">Lương</th>
+      <th class="cost-col">Lương LX</th>
       <th class="cost-col">Sửa chữa</th>
       <th class="cost-col">Phí khác</th>
       <th class="cost-col">Tổng CP</th>
       <th class="cost-col">Lợi nhuận</th>
       <th class="cost-col">Diễn giải</th>
+      <th class="cost-col">Chi phí</th>
     </tr></thead>
     <tbody id="tbody"></tbody>
   </table>
@@ -161,6 +162,18 @@ tr:hover td{background:#e8eeff!important;}
   <div class="modal">
     <h4>💰 Nhập chi phí chuyến</h4>
     <div class="modal-info" id="modalInfo"></div>
+
+    <!-- Banner tính NL tự động -->
+    <div class="fuel-banner" id="fuelBanner" style="display:none">
+      <div>
+        ⛽ <strong>Nhiên liệu tự động:</strong>
+        <span id="fuelBannerText"></span>
+      </div>
+      <button class="btn-auto" onclick="applyAutoFuel()">✅ Áp dụng</button>
+    </div>
+
+    <!-- DOANH THU -->
+    <div class="m-section">💵 Doanh thu</div>
     <div class="m-grid">
       <div class="m-field"><label>Loại DV</label><input id="mService" placeholder="Loại dịch vụ..."></div>
       <div class="m-field"><label>Đơn giá TK</label><input id="mTruckPrice" type="number" placeholder="0" oninput="calcModal()"></div>
@@ -169,23 +182,31 @@ tr:hover td{background:#e8eeff!important;}
       <div class="m-field"><label>Phí cược cont</label><input id="mDeposit" type="number" placeholder="0" oninput="calcModal()"></div>
       <div class="m-field"><label>Tổng doanh thu</label><input id="mRevenue" type="number" readonly></div>
     </div>
+
+    <!-- CHI PHÍ -->
+    <div class="m-section">💸 Chi phí</div>
     <div class="m-grid">
       <div class="m-field"><label>Cầu đường / Vé cổng</label><input id="mToll" type="number" placeholder="0" oninput="calcModal()"></div>
       <div class="m-field">
-        <label>Nhiên liệu <span id="fuelHint" style="font-size:9px;color:var(--accent);font-weight:400"></span></label>
+        <label>Nhiên liệu <span id="fuelAutoLabel" style="color:#16a34a;font-size:10px;font-weight:700;text-transform:none"></span></label>
         <input id="mFuel" type="number" placeholder="0" oninput="calcModal()">
       </div>
-      <div class="m-field"><label>Lương chuyến</label><input id="mWage" type="number" placeholder="0" oninput="calcModal()"></div>
+      <div class="m-field">
+        <label>Lương chuyến <span id="wageAutoLabel" style="color:#16a34a;font-size:10px;font-weight:700;text-transform:none"></span></label>
+        <input id="mWage" type="number" placeholder="0" oninput="calcModal()">
+      </div>
       <div class="m-field"><label>Phí sửa chữa</label><input id="mRepair" type="number" placeholder="0" oninput="calcModal()"></div>
       <div class="m-field"><label>Phí khác</label><input id="mOther" type="number" placeholder="0" oninput="calcModal()"></div>
       <div class="m-field"><label>Tổng chi phí</label><input id="mCost" type="number" readonly></div>
     </div>
-    <div class="m-field" style="margin-bottom:0"><label>Diễn giải</label><input id="mNote" placeholder="Ghi chú..."></div>
+    <div class="m-field" style="margin-bottom:8px"><label>Diễn giải</label><input id="mNote" placeholder="Ghi chú..."></div>
+
     <div class="m-total">
       <span style="font-size:12px;font-weight:600;color:var(--muted)">Lợi nhuận</span>
       <span id="mProfit" style="font-size:18px;font-weight:700;color:var(--green)">0</span>
     </div>
     <div class="m-actions">
+      <button class="btn btn-recalc" onclick="recalcFuel()">⛽ Tính lại NL</button>
       <button class="btn btn-gray" onclick="closeModal()">Hủy</button>
       <button class="btn btn-primary" onclick="saveCost()">💾 Lưu chi phí</button>
     </div>
@@ -223,6 +244,84 @@ function showToast(msg,err=false){
   clearTimeout(t._t);t._t=setTimeout(()=>{t.className="toast";},2500);
 }
 
+/* ============================================================
+   MASTER DATA — đọc từ localStorage (master.html sync về đây)
+   ============================================================ */
+const LOCAL_KEY = "MASTER_ALL_V4";
+
+function getMaster() {
+  try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "{}"); }
+  catch(e) { return {}; }
+}
+
+/* Lấy định mức NL (lít/100km) của xe theo biển số */
+function getTruckFuelRate(vehicleNo) {
+  const master = getMaster();
+  const trucks = master.trucks || [];
+  const trk = trucks.find(t => (t.truck||"").trim() === (vehicleNo||"").trim());
+  return trk ? parseFloat(trk.fuel || 0) : 0;
+}
+
+/* Lấy giá dầu áp dụng tại ngày planDate
+   — tìm mức giá có date <= planDate, mới nhất
+   — nếu không có thì lấy mức giá đầu tiên (mới nhất tuyệt đối) */
+function getFuelPrice(planDate) {
+  const master = getMaster();
+  const fuels  = (master.fuels || []).slice(); // đã sort desc by date trong master
+  if (!fuels.length) return 0;
+  if (!planDate) return parseFloat(fuels[0].price || 0);
+
+  // Tìm giá dầu gần nhất có date <= planDate
+  const applicable = fuels.filter(f => f.date <= planDate);
+  if (applicable.length) return parseFloat(applicable[0].price || 0); // fuels sort desc → [0] là mới nhất
+  // Nếu planDate trước tất cả → lấy giá cũ nhất
+  return parseFloat(fuels[fuels.length - 1].price || 0);
+}
+
+/* Lấy lương chuyến từ master theo khách hàng + kho
+   Tra qua customers[], khớp name + factory/factory2/3/4 → lấy wage tương ứng */
+function getWageFromMaster(customerName, factoryName) {
+  const master    = getMaster();
+  const customers = master.customers || [];
+  const cusName   = (customerName || "").trim();
+  const facName   = (factoryName  || "").trim();
+  if (!cusName || !facName) return 0;
+
+  const khoKeys = [
+    { factory: "factory",  wage: "wage"  },
+    { factory: "factory2", wage: "wage2" },
+    { factory: "factory3", wage: "wage3" },
+    { factory: "factory4", wage: "wage4" },
+  ];
+
+  for (const c of customers) {
+    if ((c.name || "").trim() !== cusName) continue;
+    for (const k of khoKeys) {
+      if ((c[k.factory] || "").trim() === facName) {
+        return parseFloat(c[k.wage] || 0);
+      }
+    }
+  }
+  return 0;
+}
+
+/* Tính phí nhiên liệu cho 1 chuyến
+   Công thức: km × định_mức (lít/100km) / 100 × giá_dầu (đ/lít)
+   Trả về { cost, liters, rate, pricePerLiter, hasData } */
+function calcAutoFuelCost(vehicleNo, km, planDate) {
+  const fuelRate     = getTruckFuelRate(vehicleNo);  // lít/100km
+  const pricePerLiter = getFuelPrice(planDate);       // đ/lít
+  const kmNum        = parseFloat(km || 0);
+
+  if (!fuelRate || !pricePerLiter || !kmNum) {
+    return { cost: 0, liters: 0, rate: fuelRate, pricePerLiter, hasData: false };
+  }
+
+  const liters = kmNum * fuelRate / 100;
+  const cost   = Math.round(liters * pricePerLiter);
+  return { cost, liters: +liters.toFixed(1), rate: fuelRate, pricePerLiter, hasData: true };
+}
+
 /* FIREBASE */
 firebase.initializeApp({
   apiKey:"AIzaSyAPmHlNgx-w5KfK4LF490pvdYA_mGgcX_k",
@@ -234,9 +333,10 @@ firebase.initializeApp({
 });
 const db=firebase.firestore();
 const COL_TRK="trucking_plan";
-const COL_COST="acc_costs"; // lưu chi phí riêng, key = truckingId
+const COL_COST="acc_costs";
 
 let trkStore=[], costStore={}, currentTrkId=null;
+let _autoFuelCost = 0; // giá trị NL tự tính, để applyAutoFuel dùng
 
 /* Load trucking real-time */
 db.collection(COL_TRK).orderBy("planDate","desc").onSnapshot(snap=>{
@@ -261,8 +361,6 @@ function render(data){
   const to=document.getElementById("toDate").value;
 
   let rows=data||[...trkStore];
-
-  // filter
   if(kw) rows=rows.filter(r=>
     (r.customer||"").toLowerCase().includes(kw)||
     (r.containerNo||"").toLowerCase().includes(kw)||
@@ -290,14 +388,15 @@ function render(data){
     sumRev+=rev; sumCost+=cost;
     if(hasCostData) doneCnt++;
 
+    // Tính NL tự động để hiển thị gợi ý trong bảng
+    const autoNL = calcAutoFuelCost(r.vehicleNo, r.km, r.planDate);
+    const fuelDisplay = hasCostData
+      ? fmt(c.fuel)
+      : (autoNL.hasData ? `<span style="color:#16a34a;font-size:10.5px">~${fmt(autoNL.cost)}</span>` : "");
+
     const tr=document.createElement("tr");
     tr.innerHTML=`
       <td>${i+1}</td>
-      <td class="cost-cell" style="position:sticky;left:0;z-index:2;white-space:nowrap">
-        <button class="btn btn-cost btn-sm" onclick="openModal('${r.id}')">
-          ${hasCostData?"✏️ Sửa":"➕ CP"}
-        </button>
-      </td>
       <td>${r.planDate||""}</td>
       <td class="tl" style="font-weight:600">${r.customer||""}</td>
       <td>${r.cusCode||""}</td>
@@ -315,13 +414,18 @@ function render(data){
       <td class="num cost-cell">${hasCostData?fmt(c.deposit):""}</td>
       <td class="num cost-cell" style="color:var(--accent)">${hasCostData?fmt(rev):""}</td>
       <td class="num cost-cell">${hasCostData?fmt(c.toll):""}</td>
-      <td class="num cost-cell">${hasCostData?fmt(c.fuel):""}</td>
+      <td class="num cost-cell">${fuelDisplay}</td>
       <td class="num cost-cell">${hasCostData?fmt(c.wage):""}</td>
       <td class="num cost-cell">${hasCostData?fmt(c.repair):""}</td>
       <td class="num cost-cell">${hasCostData?fmt(c.other):""}</td>
       <td class="num cost-cell" style="color:var(--red)">${hasCostData?fmt(cost):""}</td>
       <td class="num cost-cell" style="color:${profit>=0?"var(--green)":"var(--red)"};font-weight:700">${hasCostData?fmt(profit):""}</td>
-      <td class="tl cost-cell" style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.note||""}</td>`;
+      <td class="tl cost-cell" style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.note||""}</td>
+      <td class="cost-cell">
+        <button class="btn btn-cost btn-sm" onclick="openModal('${r.id}')">
+          ${hasCostData?"✏️ Sửa CP":"➕ Nhập CP"}
+        </button>
+      </td>`;
     tbody.appendChild(tr);
   });
 
@@ -337,7 +441,9 @@ function render(data){
 document.getElementById("filterHasCost").onchange=render;
 document.getElementById("filterNoCost").onchange=render;
 
-/* MODAL */
+/* ============================================================
+   MODAL
+   ============================================================ */
 function openModal(trkId){
   currentTrkId=trkId;
   const r=trkStore.find(x=>x.id===trkId)||{};
@@ -346,51 +452,99 @@ function openModal(trkId){
   // Info banner
   document.getElementById("modalInfo").innerHTML=`
     <div><span>📅 Ngày:</span> ${r.planDate||""} &nbsp;|&nbsp; <span>👤 Khách:</span> ${r.customer||""} &nbsp;|&nbsp; <span>🔑 Mã KH:</span> ${r.cusCode||""}</div>
-    <div><span>🏭 Kho:</span> ${r.factory||""} &nbsp;|&nbsp; <span>🚛 Xe:</span> ${r.vehicleNo||""} &nbsp;|&nbsp; <span>👨‍✈️ Lái xe:</span> ${r.driver||""}</div>
+    <div><span>🏭 Kho:</span> ${r.factory||""} &nbsp;|&nbsp; <span>🚛 Xe:</span> ${r.vehicleNo||""} &nbsp;|&nbsp; <span>📏 KM:</span> ${r.km||"?"} km</div>
     <div><span>📦 Container:</span> ${r.containerNo||"(chưa có)"} &nbsp;|&nbsp; <span>📍 Tuyến:</span> ${r.depot||""} → ${r.port||""}</div>`;
 
-  mTruckPrice.value=c.truckPrice!==undefined?c.truckPrice:(+r.price||0);
-  mService.value=c.service||"";
-  mLift.value=c.lift||0;
-  mDrop.value=c.dropFee||0;
-  mDeposit.value=c.deposit||0;
-  mToll.value=c.toll||0;
-  mWage.value=c.wage||0;
-  mRepair.value=c.repair||0;
-  mOther.value=c.other||0;
-  mNote.value=c.note||"";
+  // Điền form
+  mTruckPrice.value = c.truckPrice!==undefined ? c.truckPrice : (r.price||0);
+  mService.value    = c.service||"";
+  mLift.value       = c.lift||0;
+  mDrop.value       = c.dropFee||0;
+  mDeposit.value    = c.deposit||0;
+  mToll.value       = c.toll||0;
+  mRepair.value     = c.repair||0;
+  mOther.value      = c.other||0;
+  mNote.value       = c.note||"";
 
-  // Tự tính chi phí nhiên liệu
-  const km       = +r.km||0;
-  const fuelRate = +r.fuelRate||0; // định mức từ master truck
-  const date     = r.planDate||"";
-  const autoFuel = calcFuelCost(km, fuelRate, date);
-  const fuelPrice= getFuelPrice(date);
-
-  if(c.fuel!==undefined){
-    mFuel.value=c.fuel; // đã lưu trước → giữ nguyên
-  } else if(autoFuel>0){
-    mFuel.value=autoFuel; // tự tính lần đầu
+  // ── Lương chuyến tự động từ master ──
+  const masterWage = getWageFromMaster(r.customer, r.factory);
+  const wageVal    = c.wage !== undefined ? c.wage   // đã lưu → giữ nguyên
+                   : r.wage               ? r.wage   // trucking có → dùng
+                   : masterWage;                     // tra master theo kho
+  mWage.value = wageVal || 0;
+  const wageAutoLbl = document.getElementById("wageAutoLabel");
+  if (!c.wage && masterWage) {
+    mWage.classList.add("auto-filled");
+    wageAutoLbl.textContent = `(master: ${fmt(masterWage)}đ)`;
   } else {
-    mFuel.value=0;
+    mWage.classList.remove("auto-filled");
+    wageAutoLbl.textContent = masterWage ? `(master: ${fmt(masterWage)}đ)` : "";
   }
 
-  // Hiện gợi ý công thức
-  const hint=document.getElementById("fuelHint");
-  if(hint && km && fuelRate && fuelPrice){
-    const liters=(km*fuelRate/100).toFixed(1);
-    hint.textContent=`(${km}km × ${fuelRate}L/100km ÷ 100 = ${liters}L × ${Number(fuelPrice).toLocaleString("vi-VN")}đ = ${Number(autoFuel).toLocaleString("vi-VN")}đ)`;
-  } else if(hint){
-    hint.textContent = fuelPrice ? `(Giá dầu: ${Number(fuelPrice).toLocaleString("vi-VN")}đ/lít)` : "(Chưa có giá dầu)";
+  // ── Tính NL tự động ──
+  const auto = calcAutoFuelCost(r.vehicleNo, r.km, r.planDate);
+  _autoFuelCost = auto.cost;
+
+  const fuelBanner  = document.getElementById("fuelBanner");
+  const fuelAutoLbl = document.getElementById("fuelAutoLabel");
+
+  if (auto.hasData) {
+    // Hiện banner
+    document.getElementById("fuelBannerText").innerHTML =
+      `<strong>${fmt(auto.cost)} đ</strong> &nbsp;
+       <span class="fuel-formula">(${auto.liters} lít × ${fmt(auto.pricePerLiter)} đ/lít &nbsp;|&nbsp; ĐM: ${auto.rate} lít/100km &nbsp;×&nbsp; ${r.km} km)</span>`;
+    fuelBanner.style.display = "flex";
+    fuelAutoLbl.textContent  = `(ĐM: ${auto.rate}L/100 × ${fmt(auto.pricePerLiter)}đ/L)`;
+
+    // Nếu chưa có data lưu → tự điền luôn
+    if (!c.fuel) {
+      mFuel.value = auto.cost;
+      mFuel.classList.add("auto-filled");
+    } else {
+      mFuel.value = c.fuel;
+      mFuel.classList.remove("auto-filled");
+    }
+  } else {
+    fuelBanner.style.display = "none";
+    fuelAutoLbl.textContent  = "";
+    mFuel.value = c.fuel||0;
+    mFuel.classList.remove("auto-filled");
+    // Thông báo thiếu data nếu cần
+    if (!c.fuel && r.km) {
+      const missing = [];
+      if (!getTruckFuelRate(r.vehicleNo)) missing.push("định mức xe");
+      if (!getFuelPrice(r.planDate))      missing.push("giá dầu");
+      if (missing.length) showToast(`⚠️ Thiếu ${missing.join(", ")} để tự tính NL`, true);
+    }
   }
+
   calcModal();
   document.getElementById("modalBg").classList.add("show");
 }
 
+/* Nút "✅ Áp dụng" trên banner NL */
+window.applyAutoFuel = function() {
+  mFuel.value = _autoFuelCost;
+  mFuel.classList.add("auto-filled");
+  calcModal();
+  showToast("✅ Đã áp dụng nhiên liệu tự tính");
+};
+
+/* Nút "⛽ Tính lại NL" trong footer modal */
+window.recalcFuel = function() {
+  const r = trkStore.find(x=>x.id===currentTrkId)||{};
+  const auto = calcAutoFuelCost(r.vehicleNo, r.km, r.planDate);
+  if (!auto.hasData) { showToast("⚠️ Không đủ dữ liệu để tính NL (cần định mức xe + giá dầu)", true); return; }
+  _autoFuelCost = auto.cost;
+  mFuel.value = auto.cost;
+  mFuel.classList.add("auto-filled");
+  calcModal();
+  showToast(`⛽ Đã tính lại: ${auto.liters} lít × ${fmt(auto.pricePerLiter)} đ = ${fmt(auto.cost)} đ`);
+};
+
 function calcModal(){
-  const truck=+mTruckPrice.value||0,lift=+mLift.value||0,drop=+mDrop.value||0,dep=+mDeposit.value||0;
-  const toll=+mToll.value||0,fuel=+mFuel.value||0,wage=+mWage.value||0,repair=+mRepair.value||0,other=+mOther.value||0;
-  // Tổng DT = Đơn giá TK + Phí nâng + Phí hạ + Cược cont
+  const truck=+mTruckPrice.value||0, lift=+mLift.value||0, drop=+mDrop.value||0, dep=+mDeposit.value||0;
+  const toll=+mToll.value||0, fuel=+mFuel.value||0, wage=+mWage.value||0, repair=+mRepair.value||0, other=+mOther.value||0;
   const rev=truck+lift+drop+dep, cost=toll+fuel+wage+repair+other, profit=rev-cost;
   mRevenue.value=rev; mCost.value=cost;
   const el=document.getElementById("mProfit");
@@ -444,8 +598,10 @@ window.exportExcel=function(){
   const hdr=["Ngày","Khách","Mã KH","Kho/NM","KM","Xe","Lái xe","Container","Booking","Nơi lấy","Nơi hạ","Đơn giá TK","Loại DV","Phí nâng","Phí hạ","Cược cont","Tổng DT","Cầu đường","Nhiên liệu","Lương","Sửa chữa","Phí khác","Tổng CP","Lợi nhuận","Diễn giải"];
   const rows=trkStore.map(r=>{
     const c=costStore[r.id]||{};
-    const rev=+c.revenue||0,cost=+c.cost||0;
-    return [r.planDate,r.customer,r.cusCode,r.factory,r.km,r.vehicleNo,r.driver,r.containerNo,r.booking,r.depot,r.port,r.price,c.service||"",c.lift||"",c.dropFee||"",c.deposit||"",rev||"",c.toll||"",c.fuel||"",c.wage||"",c.repair||"",c.other||"",cost||"",rev-cost||"",c.note||""];
+    const rev=+c.revenue||0, cost=+c.cost||0;
+    // Nếu chưa nhập NL → dùng giá tự tính
+    const fuelVal = c.fuel || (calcAutoFuelCost(r.vehicleNo, r.km, r.planDate).cost) || "";
+    return [r.planDate,r.customer,r.cusCode,r.factory,r.km,r.vehicleNo,r.driver,r.containerNo,r.booking,r.depot,r.port,r.price,c.service||"",c.lift||"",c.dropFee||"",c.deposit||"",rev||"",c.toll||"",fuelVal,c.wage||"",c.repair||"",c.other||"",cost||"",rev-cost||"",c.note||""];
   });
   const csv=[hdr,...rows].map(r=>r.join(",")).join("\n");
   const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
