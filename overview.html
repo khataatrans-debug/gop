@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📊 Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+:root {
+  --navy:   #0d2248;
+  --accent: #1d6ef5;
+  --green:  #0d9f6e;
+  --border: #e2e8f5;
+  --muted:  #64748b;
+  --bg:     #eef1f8;
+  --white:  #ffffff;
+  --text:   #0f172a;
+  --alt:    #f7f9ff;
+  --shadow: 0 1px 3px rgba(13,34,72,.08), 0 1px 2px rgba(13,34,72,.04);
+  --r:      6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Be Vietnam Pro', 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 13px; min-height: 100vh; }
+
+/* ── NAV ── */
+.nav { background: var(--navy); display: flex; align-items: center; padding: 0 18px; height: 46px; gap: 2px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(13,34,72,.3); }
+.nav a { color: rgba(255,255,255,.6); text-decoration: none; font-size: 12.5px; font-weight: 500; padding: 5px 12px; border-radius: 5px; transition: .15s; white-space: nowrap; }
+.nav a:hover { background: rgba(255,255,255,.1); color: #fff; }
+.nav a.active { background: rgba(29,110,245,.5); color: #fff; font-weight: 600; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.nav-user { color: rgba(255,255,255,.75); font-size: 12px; font-weight: 500; }
+.btn-logout { background: rgba(255,255,255,.1); color: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.15); border-radius: 5px; padding: 4px 11px; font-size: 12px; font-family: inherit; cursor: pointer; transition: .15s; }
+.btn-logout:hover { background: rgba(255,255,255,.2); color: #fff; }
+
+/* ── TOOLBAR ── */
+.toolbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 8px 18px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.toolbar-title { font-size: 13px; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+.toolbar-title::before { content: ''; width: 3px; height: 15px; background: var(--accent); border-radius: 2px; display: inline-block; }
+
+/* ── CONTENT ── */
+.page-wrap { padding: 24px; }
+</style>
+</head>
+<body>
+
+<script>
+/* ── GUARD ── */
+(function guardPage() {
+  const THIS_PAGE   = "overview.html";
+  const CURRENT_KEY = "LOGIN_USER";
+  const raw = localStorage.getItem(CURRENT_KEY);
+  if (!raw) { location.href = "login.html"; return; }
+  const session = JSON.parse(raw);
+  if (session.role === "admin") return;
+  if (!session.pages || !session.pages.includes(THIS_PAGE)) {
+    location.href = (session.pages && session.pages.length > 0) ? session.pages[0] : "login.html";
+  }
+})();
+</script>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-right">
+    <span class="nav-user" id="userInfo"></span>
+    <button class="btn-logout" id="btnLogout">↩ Đăng xuất</button>
+  </div>
+</nav>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-title">📊 TỔNG QUAN BÁO CÁO</div>
+</div>
+
+<!-- NỘI DUNG TRANG -->
+<div class="page-wrap">
+  <!-- Nội dung overview tại đây -->
+  <p style="color:var(--muted)">Nội dung trang Overview...</p>
+</div>
+
+<script>
+const CURRENT_KEY = "LOGIN_USER";
+const ALL_NAV = [
+  { page: "index.html",       label: "🚚 Trucking" },
+  { page: "accountant.html",  label: "📒 Accountant" },
+  { page: "performance.html", label: "📈 Performance" },
+  { page: "overview.html",    label: "📊 Overview" },
+  { page: "master.html",      label: "📂 Master",      adminOnly: true },
+  { page: "maintenance.html", label: "🔧 Bảo dưỡng",  adminOnly: true },
+  { page: "users.html",       label: "👑 Users",        adminOnly: true },
+];
+
+(function buildNav() {
+  const session  = JSON.parse(localStorage.getItem(CURRENT_KEY) || "{}");
+  const nav      = document.getElementById("mainNav");
+  const navRight = nav.querySelector(".nav-right");
+
+  ALL_NAV.forEach(item => {
+    if (item.adminOnly && session.role !== "admin") return;
+    if (!item.adminOnly && session.role !== "admin" &&
+        !(session.pages || []).includes(item.page)) return;
+    const a = document.createElement("a");
+    a.href = item.page;
+    a.textContent = item.label;
+    if (location.pathname.endsWith(item.page)) a.classList.add("active");
+    nav.insertBefore(a, navRight);
+  });
+
+  document.getElementById("userInfo").textContent =
+    session.username ? `👤 ${session.username}` : "";
+  document.getElementById("btnLogout").onclick = function () {
+    localStorage.removeItem(CURRENT_KEY);
+    location.href = "login.html";
+  };
+})();
+
+// ── Code xử lý riêng của Overview ──
+</script>
+</body>
+</html>
